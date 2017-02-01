@@ -18,7 +18,7 @@ define stop { raise StopIteration() }
 try: {
     write_prompt()
 
-    stdin.each_line{|raw|
+    stdin.each_line(|raw|
         var line = raw.encode().unwrap().trim()
 
         if pending_line:
@@ -50,7 +50,7 @@ try: {
         }
 
         write_prompt()
-    }
+    )
 except StopIteration:
 
 }

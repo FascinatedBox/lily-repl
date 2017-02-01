@@ -1,6 +1,6 @@
 # lily-repl
 
-### Version 0.1
+### Version 1.0.0
 
 This package provides a simple repl for Lily. The repl is able to print out
 single expressions, or parse statements. The repl will change prompts if the
