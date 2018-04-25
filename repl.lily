@@ -3,54 +3,41 @@ import spawni
 var interp = spawni.Interpreter()
 var pending_line = ""
 
-define write_prompt
-{
-    if pending_line:
+while 1: {
+    if pending_line: {
         stdout.write("... ")
     else:
         stdout.write(">>> ")
-}
+    }
 
-class StopIteration < Exception("") {}
+    var line = stdin.read_line().encode().unwrap().trim()
 
-define stop { raise StopIteration() }
+    if pending_line: {
+        line = "{0} {1}".format(pending_line, line)
+    elif line == "exit":
+        break
+    }
 
-try: {
-    write_prompt()
+    var message = ""
+    var expr_result = interp.parse_expr("[repl]", line)
 
-    stdin.each_line(|raw|
-        var line = raw.encode().unwrap().trim()
+    if expr_result.is_some(): {
+        # Print the result of a single simple expression.
+        stdout.print(expr_result.unwrap())
+    else:
+        # Maybe it's a statement block...
+        var is_statement = interp.parse_string("[repl]", line)
+        if is_statement == false: {
+            message = interp.error_message()
 
-        if pending_line:
-            line = $"^(pending_line) ^(line)"
-        elif line == "exit":
-            stop()
+            if message.ends_with("'end of file'."): {
+                # Assume it's incomplete and keep building it up.
+                pending_line = line
+            else:
+                pending_line = ""
 
-        var message = ""
-        var expr_result = interp.parse_expr("[repl]", line)
-
-        if expr_result.is_some(): {
-            # Print the result of a single simple expression.
-            stdout.print(expr_result.unwrap())
-        else:
-            # Maybe it's a statement block...
-            var is_statement = interp.parse_string("[repl]", line)
-            if is_statement == false: {
-                message = interp.error_message()
-
-                if message.ends_with("'end of file'."): {
-                    # Assume it's incomplete and keep building it up.
-                    pending_line = line
-                else:
-                    pending_line = ""
-
-                    stdout.print(message)
-                }
+                stdout.print(message)
             }
         }
-
-        write_prompt()
-    )
-except StopIteration:
-
+    }
 }
