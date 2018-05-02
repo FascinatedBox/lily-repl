@@ -1,0 +1,9 @@
+{
+    "version": "v0.1.0",
+    "summary": "Very basic spawni-based repl for Lily.",
+    "source": "https://github.com/FascinatedBox/lily-repl",
+    "license": "MIT",
+    "requirements": {
+        "FascinatedBox/lily-spawni": "v0.2.0"
+    }
+}
